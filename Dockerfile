@@ -27,4 +27,4 @@ EXPOSE 7349 7350 7351
 ENTRYPOINT ["tini", "--", "/nakama/nakama"]
 
 HEALTHCHECK --interval=5m --timeout=10s \
-  CMD curl -f http://localhost:7350/ || exit 1
+CMD curl -f http://localhost:7350/ || exit 1
