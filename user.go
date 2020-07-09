@@ -104,13 +104,13 @@ func ExistTournamentByID(ctx context.Context, logger runtime.Logger, nk runtime.
 	limit := 1   // Number to list per page.
 	cursor := ""
 
-	if tournaments, err := nk.TournamentList(ctx, categoryStart, categoryEnd, startTime, endTime, limit, cursor); err != nil {
+	tournaments, err := nk.TournamentList(ctx, categoryStart, categoryEnd, startTime, endTime, limit, cursor)
+	if err != nil {
 		return false
-	} else {
-		for _, t := range tournaments.Tournaments {
-			if t.GetId() == id {
-				return true
-			}
+	}
+	for _, t := range tournaments.Tournaments {
+		if t.GetId() == id {
+			return true
 		}
 	}
 
