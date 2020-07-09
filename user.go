@@ -108,6 +108,7 @@ func ExistTournamentByID(ctx context.Context, logger runtime.Logger, nk runtime.
 	if err != nil {
 		return false
 	}
+
 	for _, t := range tournaments.Tournaments {
 		if t.GetId() == id {
 			return true
