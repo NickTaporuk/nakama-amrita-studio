@@ -20,6 +20,8 @@ const (
 var (
 	// ErrorNotFoundPayloadParameterTournamentID
 	ErrorNotFoundPayloadParameterTournamentID = errors.New("parameter tournament_id is not found")
+	// ErrorPayloadEmpty
+	ErrorPayloadEmpty = errors.New("parameters are empty")
 )
 
 // All Go modules must have a InitModule function with this exact signature.
@@ -36,9 +38,18 @@ func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runti
 // AddUserToTournament
 func AddUserToTournament(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, payload string) (string, error) {
 
+	if payload == "" {
+		return "", ErrorPayloadEmpty
+	}
+
 	meta := make(map[string]interface{})
+
 	if err := json.Unmarshal([]byte(payload), &meta); err != nil {
 		return "", err
+	}
+
+	if len(meta) == 0 {
+		return "", ErrorPayloadEmpty
 	}
 
 	if _, ok := meta[TournamentKeyFromPayload]; !ok {
@@ -46,6 +57,9 @@ func AddUserToTournament(ctx context.Context, logger runtime.Logger, db *sql.DB,
 	}
 
 	tournamentID := meta[TournamentKeyFromPayload].(string)
+	if tournamentID == "" {
+		return "", ErrorPayloadEmpty
+	}
 
 	userID := ctx.Value(runtime.RUNTIME_CTX_USER_ID).(string)
 	username := ctx.Value(runtime.RUNTIME_CTX_USERNAME).(string)
