@@ -22,6 +22,8 @@ var (
 	ErrorNotFoundPayloadParameterTournamentID = errors.New("parameter tournament_id is not found")
 	// ErrorPayloadEmpty
 	ErrorPayloadEmpty = errors.New("parameters are empty")
+	// ErrorTournamentIDShouldBeString
+	ErrorTournamentIDShouldBeString = errors.New("parameter tournament_id should be string type")
 )
 
 // All Go modules must have a InitModule function with this exact signature.
@@ -56,6 +58,10 @@ func AddUserToTournament(ctx context.Context, logger runtime.Logger, db *sql.DB,
 		return "", ErrorNotFoundPayloadParameterTournamentID
 	}
 
+	if ok := checkTypeString(meta[TournamentKeyFromPayload]); !ok {
+		return "", ErrorTournamentIDShouldBeString
+	}
+
 	tournamentID := meta[TournamentKeyFromPayload].(string)
 	if tournamentID == "" {
 		return "", ErrorPayloadEmpty
@@ -77,6 +83,15 @@ func AddUserToTournament(ctx context.Context, logger runtime.Logger, db *sql.DB,
 	}
 
 	return "Success", nil
+}
+
+func checkTypeString(in interface{}) bool {
+	switch in.(type) {
+	case string:
+		return true
+	}
+
+	return false
 }
 
 // ExistTournament check exist particular tournament by id
